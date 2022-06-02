@@ -10,100 +10,108 @@ using InscripcionWeb.Models;
 
 namespace InscripcionWeb.Controllers
 {
-    public class CarrerasController : Controller
+    public class MateriasController : Controller
     {
         private readonly InscripcionWebContext _context;
 
-        public CarrerasController(InscripcionWebContext context)
+        public MateriasController(InscripcionWebContext context)
         {
             _context = context;
         }
 
-        // GET: Carreras
+        // GET: Materias
         public async Task<IActionResult> Index()
         {
-              return _context.Carreras != null ? 
-                          View(await _context.Carreras.ToListAsync()) :
-                          Problem("Entity set 'InscripcionWebContext.Carrera'  is null.");
+            var inscripcionWebContext = _context.Materias.Include(m => m.PeriodoAcademico).ThenInclude(p=>p.Carrera);
+            return View(await inscripcionWebContext.ToListAsync());
         }
 
-        // GET: Carreras/Details/5
+        // GET: Materias/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Carreras == null)
+            if (id == null || _context.Materias == null)
             {
                 return NotFound();
             }
 
-            var carrera = await _context.Carreras
+            var materia = await _context.Materias
+                .Include(m => m.PeriodoAcademico)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (carrera == null)
+            if (materia == null)
             {
                 return NotFound();
             }
 
-            return View(carrera);
+            return View(materia);
         }
 
-        // GET: Carreras/Create
+        // GET: Materias/Create
         public IActionResult Create()
         {
+            //ViewData["PeriodoAcademicoId"] = new SelectList(_context.PeriodosAcademicos, "Id", "Nombre");
+            ViewData["PeriodoAcademicoId"] = new SelectList(
+                from periodo in _context.PeriodosAcademicos.Include(p=>p.Carrera).ToList()
+                select new {Id=periodo.Id, Nombre=periodo.Nombre+" "+periodo.Carrera.Nombre},"Id","Nombre");
+                
             return View();
         }
 
-        // POST: Carreras/Create
+        // POST: Materias/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nombre")] Carrera carrera)
+        public async Task<IActionResult> Create([Bind("Id,Nombre,PeriodoAcademicoId")] Materia materia)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(carrera);
+                _context.Add(materia);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(carrera);
+            ViewData["PeriodoAcademicoId"] = new SelectList(_context.PeriodosAcademicos, "Id", "Nombre", materia.PeriodoAcademicoId);
+            return View(materia);
         }
 
-        // GET: Carreras/Edit/5
+        // GET: Materias/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Carreras == null)
+            if (id == null || _context.Materias == null)
             {
                 return NotFound();
             }
 
-            var carrera = await _context.Carreras.FindAsync(id);
-            if (carrera == null)
+            var materia = await _context.Materias.FindAsync(id);
+            if (materia == null)
             {
                 return NotFound();
             }
-            return View(carrera);
+            ViewData["PeriodoAcademicoId"] = new SelectList(_context.PeriodosAcademicos, "Id", "Nombre", materia.PeriodoAcademicoId);
+            return View(materia);
         }
 
-        // POST: Carreras/Edit/5
+        // POST: Materias/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nombre")] Carrera carrera)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Nombre,PeriodoAcademicoId")] Materia materia)
         {
-            if (id != carrera.Id)
+            if (id != materia.Id)
             {
                 return NotFound();
             }
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(carrera);
+                    _context.Update(materia);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CarreraExists(carrera.Id))
+                    if (!MateriaExists(materia.Id))
                     {
                         return NotFound();
                     }
@@ -114,69 +122,70 @@ namespace InscripcionWeb.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(carrera);
+            ViewData["PeriodoAcademicoId"] = new SelectList(_context.PeriodosAcademicos, "Id", "Nombre", materia.PeriodoAcademicoId);
+            return View(materia);
         }
 
-        // GET: Carreras/Delete/5
+        // GET: Materias/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Carreras == null)
+            if (id == null || _context.Materias == null)
             {
                 return NotFound();
             }
 
-            var carrera = await _context.Carreras
+            var materia = await _context.Materias
+                .Include(m => m.PeriodoAcademico)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (carrera == null)
+            if (materia == null)
             {
                 return NotFound();
             }
 
-            return View(carrera);
+            return View(materia);
         }
 
-        // POST: Carreras/Delete/5
+        // POST: Materias/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Carreras == null)
+            if (_context.Materias == null)
             {
-                return Problem("Entity set 'InscripcionWebContext.Carrera'  is null.");
+                return Problem("Entity set 'InscripcionWebContext.Materia'  is null.");
             }
-            var carrera = await _context.Carreras.FindAsync(id);
-            if (carrera != null)
+            var materia = await _context.Materias.FindAsync(id);
+            if (materia != null)
             {
-                _context.Carreras.Remove(carrera);
+                _context.Materias.Remove(materia);
             }
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CarreraExists(int id)
+        private bool MateriaExists(int id)
         {
-          return (_context.Carreras?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (_context.Materias?.Any(e => e.Id == id)).GetValueOrDefault();
         }
 
         public async Task<IActionResult> Periodos(int? id)
         {
-            if (id == null || _context.Carreras == null)
+            if (id == null || _context.Materias == null)
             {
                 return NotFound();
             }
 
-            var carrera = await _context.Carreras.Include(c=>c.PeriodosAcademicos)
+            var materia = await _context.Materias
+                .Include(m => m.PeriodoAcademico)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (carrera == null)
+            if (materia == null)
             {
                 return NotFound();
             }
 
-            return View(carrera);
+            return View(materia);
         }
-
-
 
     }
 }

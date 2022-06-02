@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace InscripcionWeb.Models
 {
@@ -8,5 +9,6 @@ namespace InscripcionWeb.Models
         [Required]
         [Display(Name = "Carrera")]
         public string Nombre { get; set; }
+        public ObservableCollection <PeriodoAcademico> PeriodosAcademicos { get; set; }
     }
 }

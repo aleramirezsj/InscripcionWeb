@@ -48,7 +48,7 @@ namespace InscripcionWeb.Controllers
         // GET: PeriodosAcademicos/Create
         public IActionResult Create()
         {
-            ViewData["CarreraId"] = new SelectList(_context.Carreras, "Id", "Nombre");
+            ViewData["ListaDeCarreras"] = new SelectList(_context.Carreras, "Id", "Nombre");
             return View();
         }
 

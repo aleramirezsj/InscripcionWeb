@@ -21,5 +21,7 @@ namespace InscripcionWeb.Data
         public DbSet<InscripcionWeb.Models.Carrera>? Carreras { get; set; }
 
         public DbSet<InscripcionWeb.Models.PeriodoAcademico>? PeriodosAcademicos { get; set; }
+
+        public DbSet<InscripcionWeb.Models.Materia>? Materias { get; set; }
     }
 }
