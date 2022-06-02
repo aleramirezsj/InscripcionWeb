@@ -10,100 +10,104 @@ using InscripcionWeb.Models;
 
 namespace InscripcionWeb.Controllers
 {
-    public class CarrerasController : Controller
+    public class PeriodosAcademicosController : Controller
     {
         private readonly InscripcionWebContext _context;
 
-        public CarrerasController(InscripcionWebContext context)
+        public PeriodosAcademicosController(InscripcionWebContext context)
         {
             _context = context;
         }
 
-        // GET: Carreras
+        // GET: PeriodosAcademicos
         public async Task<IActionResult> Index()
         {
-              return _context.Carreras != null ? 
-                          View(await _context.Carreras.ToListAsync()) :
-                          Problem("Entity set 'InscripcionWebContext.Carrera'  is null.");
+            var inscripcionWebContext = _context.PeriodosAcademicos.Include(p => p.Carrera);
+            return View(await inscripcionWebContext.ToListAsync());
         }
 
-        // GET: Carreras/Details/5
+        // GET: PeriodosAcademicos/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Carreras == null)
+            if (id == null || _context.PeriodosAcademicos == null)
             {
                 return NotFound();
             }
 
-            var carrera = await _context.Carreras
+            var periodoAcademico = await _context.PeriodosAcademicos
+                .Include(p => p.Carrera)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (carrera == null)
+            if (periodoAcademico == null)
             {
                 return NotFound();
             }
 
-            return View(carrera);
+            return View(periodoAcademico);
         }
 
-        // GET: Carreras/Create
+        // GET: PeriodosAcademicos/Create
         public IActionResult Create()
         {
+            ViewData["CarreraId"] = new SelectList(_context.Carreras, "Id", "Nombre");
             return View();
         }
 
-        // POST: Carreras/Create
+        // POST: PeriodosAcademicos/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nombre")] Carrera carrera)
+        public async Task<IActionResult> Create([Bind("Id,Nombre,CarreraId")] PeriodoAcademico periodoAcademico)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(carrera);
+                _context.Add(periodoAcademico);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(carrera);
+            ViewData["CarreraId"] = new SelectList(_context.Carreras, "Id", "Nombre", periodoAcademico.CarreraId);
+            return View(periodoAcademico);
         }
 
-        // GET: Carreras/Edit/5
+        // GET: PeriodosAcademicos/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Carreras == null)
+            if (id == null || _context.PeriodosAcademicos == null)
             {
                 return NotFound();
             }
 
-            var carrera = await _context.Carreras.FindAsync(id);
-            if (carrera == null)
+            var periodoAcademico = await _context.PeriodosAcademicos.FindAsync(id);
+            if (periodoAcademico == null)
             {
                 return NotFound();
             }
-            return View(carrera);
+            ViewData["CarreraId"] = new SelectList(_context.Carreras, "Id", "Nombre", periodoAcademico.CarreraId);
+            return View(periodoAcademico);
         }
 
-        // POST: Carreras/Edit/5
+        // POST: PeriodosAcademicos/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nombre")] Carrera carrera)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Nombre,CarreraId")] PeriodoAcademico periodoAcademico)
         {
-            if (id != carrera.Id)
+            if (id != periodoAcademico.Id)
             {
                 return NotFound();
             }
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(carrera);
+                    _context.Update(periodoAcademico);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CarreraExists(carrera.Id))
+                    if (!PeriodoAcademicoExists(periodoAcademico.Id))
                     {
                         return NotFound();
                     }
@@ -114,49 +118,51 @@ namespace InscripcionWeb.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(carrera);
+            ViewData["CarreraId"] = new SelectList(_context.Carreras, "Id", "Nombre", periodoAcademico.CarreraId);
+            return View(periodoAcademico);
         }
 
-        // GET: Carreras/Delete/5
+        // GET: PeriodosAcademicos/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Carreras == null)
+            if (id == null || _context.PeriodosAcademicos == null)
             {
                 return NotFound();
             }
 
-            var carrera = await _context.Carreras
+            var periodoAcademico = await _context.PeriodosAcademicos
+                .Include(p => p.Carrera)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (carrera == null)
+            if (periodoAcademico == null)
             {
                 return NotFound();
             }
 
-            return View(carrera);
+            return View(periodoAcademico);
         }
 
-        // POST: Carreras/Delete/5
+        // POST: PeriodosAcademicos/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Carreras == null)
+            if (_context.PeriodosAcademicos == null)
             {
-                return Problem("Entity set 'InscripcionWebContext.Carrera'  is null.");
+                return Problem("Entity set 'InscripcionWebContext.PeriodoAcademico'  is null.");
             }
-            var carrera = await _context.Carreras.FindAsync(id);
-            if (carrera != null)
+            var periodoAcademico = await _context.PeriodosAcademicos.FindAsync(id);
+            if (periodoAcademico != null)
             {
-                _context.Carreras.Remove(carrera);
+                _context.PeriodosAcademicos.Remove(periodoAcademico);
             }
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CarreraExists(int id)
+        private bool PeriodoAcademicoExists(int id)
         {
-          return (_context.Carreras?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (_context.PeriodosAcademicos?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

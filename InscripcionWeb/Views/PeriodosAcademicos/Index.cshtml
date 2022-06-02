@@ -1,4 +1,4 @@
-﻿@model IEnumerable<InscripcionWeb.Models.Carrera>
+﻿@model IEnumerable<InscripcionWeb.Models.PeriodoAcademico>
 
 @{
     ViewData["Title"] = "Index";
@@ -7,18 +7,16 @@
 <h1>Index</h1>
 
 <p>
-    <button type="button" 
-            class="btn btn-info" 
-            onclick="window.location.href='Carreras/Create'">
-            Nuevo
-    </button>
-    
+    <a asp-action="Create">Create New</a>
 </p>
 <table class="table">
     <thead>
         <tr>
             <th>
                 @Html.DisplayNameFor(model => model.Nombre)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Carrera)
             </th>
             <th></th>
         </tr>
@@ -28,6 +26,9 @@
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Nombre)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Carrera.Nombre)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

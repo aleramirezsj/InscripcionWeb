@@ -18,6 +18,8 @@ namespace InscripcionWeb.Data
             optionsBuilder.UseSqlServer(@"Server=.\SQLEXPRESS; Database=InscripcionWebContext; User Id = sa; Password = 123; MultipleActiveResultSets = True;");
         }
 
-        public DbSet<InscripcionWeb.Models.Carrera>? Carrera { get; set; }
+        public DbSet<InscripcionWeb.Models.Carrera>? Carreras { get; set; }
+
+        public DbSet<InscripcionWeb.Models.PeriodoAcademico>? PeriodosAcademicos { get; set; }
     }
 }

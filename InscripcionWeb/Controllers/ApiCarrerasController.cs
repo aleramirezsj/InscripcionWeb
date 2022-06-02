@@ -25,22 +25,22 @@ namespace InscripcionWeb.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Carrera>>> GetCarrera()
         {
-          if (_context.Carrera == null)
+          if (_context.Carreras == null)
           {
               return NotFound();
           }
-            return await _context.Carrera.ToListAsync();
+            return await _context.Carreras.ToListAsync();
         }
 
         // GET: api/ApiCarreras/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Carrera>> GetCarrera(int id)
         {
-          if (_context.Carrera == null)
+          if (_context.Carreras == null)
           {
               return NotFound();
           }
-            var carrera = await _context.Carrera.FindAsync(id);
+            var carrera = await _context.Carreras.FindAsync(id);
 
             if (carrera == null)
             {
@@ -86,11 +86,11 @@ namespace InscripcionWeb.Controllers
         [HttpPost]
         public async Task<ActionResult<Carrera>> PostCarrera(Carrera carrera)
         {
-          if (_context.Carrera == null)
+          if (_context.Carreras == null)
           {
               return Problem("Entity set 'InscripcionWebContext.Carrera'  is null.");
           }
-            _context.Carrera.Add(carrera);
+            _context.Carreras.Add(carrera);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetCarrera", new { id = carrera.Id }, carrera);
@@ -100,17 +100,17 @@ namespace InscripcionWeb.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCarrera(int id)
         {
-            if (_context.Carrera == null)
+            if (_context.Carreras == null)
             {
                 return NotFound();
             }
-            var carrera = await _context.Carrera.FindAsync(id);
+            var carrera = await _context.Carreras.FindAsync(id);
             if (carrera == null)
             {
                 return NotFound();
             }
 
-            _context.Carrera.Remove(carrera);
+            _context.Carreras.Remove(carrera);
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -118,7 +118,7 @@ namespace InscripcionWeb.Controllers
 
         private bool CarreraExists(int id)
         {
-            return (_context.Carrera?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Carreras?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }
